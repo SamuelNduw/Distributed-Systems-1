@@ -29,9 +29,12 @@ public type Course record {
 };
 
 public final table<Programme> key(programme_code) programme_table = table [
-    {programme_code: "07BCMS", NqfLevel: "LEVEL_8", faculty: "Computing and Informatics", department_name:"Software Development", programme_title: "Bachelor of Computer Science", registration_date: "18-02-2023", courses: [{course_code: "CS101", course_name: "Introduction to Computer Science"},
+    {programme_code: "07BCMS", NqfLevel: LEVEL_8, faculty: "Computing and Informatics", department_name:"Software Development", programme_title: "Bachelor of Computer Science", registration_date: "2021-09-01T00:00:00Z", courses: [{course_code: "CS101", course_name: "Introduction to Computer Science"},
             {course_code: "CS102", course_name: "Data Structures and Algorithms"},
-            {course_code: "CS103", course_name: "Database Management Systems"}]}
+            {course_code: "CS103", course_name: "Database Management Systems"}]},
+    {programme_code: "10BENG", NqfLevel: LEVEL_8, faculty: "Engineering", department_name:"Electrical Engineering", programme_title: "Bachelor of Engineering", registration_date: "2018-09-01T00:00:00Z", courses: [{course_code: "EE101", course_name: "Introduction to Electrical Engineering"},
+            {course_code: "EE102", course_name: "Circuit Analysis"},
+            {course_code: "EE103", course_name: "Digital Systems"}]}
 ];
 
 
