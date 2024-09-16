@@ -1,7 +1,30 @@
 import ballerina/http;
 
 service /pdu on new http:Listener(9000) {
-    
+    map<Programme> programme = {};
+
+    // Resource function to handle DELETE requests
+    resource function delete programmeCode(string programmeCode, http:Caller caller) returns error?{
+        http:Response response = new();
+        http:Response notFoundResponse = new();
+        
+ // Check if the programme code exists in the table
+        if !programme_table.hasKey(programmeCode) {
+            // Create a response with a 404 Not Found status code
+            notFoundResponse.statusCode = http:STATUS_NOT_FOUND;
+            notFoundResponse.setPayload({errmsg: "Programme not found"});
+            // Respond with the not found error
+            check caller->respond(notFoundResponse);
+        } else {
+            // Remove the programme from the table
+             Programme? removedProgramme = programme_table.remove(programmeCode);
+            // Create a response with a 204 No Content status code
+            http:Response noContentResponse = new();
+            noContentResponse.statusCode = http:STATUS_NO_CONTENT;
+            // Respond with the no content status
+            check caller->respond(noContentResponse);
+        }
+    }
 }
 
 public type Programme record {|
