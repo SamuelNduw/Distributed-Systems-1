@@ -1,20 +1,7 @@
 import ballerina/http;
 
 service /pdu on new http:Listener(9000) {
-
-     resource function get programme/[string programme_code]() returns Programme|InvalidProgrammeCodeError{
-        Programme? programme= programmeTable[programme_code];
-        if programme is () {
-            return {
-                body: {
-                    errmsg: string `InvalidProgrammeCodeError: ${programme_code}`
-                }
-            };
-        }
-        return programme;
-    }
-
-    
+ 
 }
 
 public type Programme record {|
