@@ -3,6 +3,7 @@ import ballerina/http;
 // Define the service at the base path /pdu
 service /pdu on new http:Listener(9000) {
 
+
     // Resource to retrieve the list of all programs
     resource function get programs(http:Caller caller, http:Request req) returns error? {
         // Convert the table to an array to return as JSON
@@ -41,6 +42,31 @@ service /pdu on new http:Listener(9000) {
             badRequestResponse.statusCode = http:STATUS_BAD_REQUEST;
             // Respond with the bad request error
             check caller->respond(badRequestResponse);
+        }
+    }
+
+
+    // Resource function to handle DELETE requests
+    map<Programme> programme = {};
+    resource function delete programmeCode(string programmeCode, http:Caller caller) returns error?{
+        http:Response response = new();
+        http:Response notFoundResponse = new();
+        
+ // Check if the programme code exists in the table
+        if !programme_table.hasKey(programmeCode) {
+            // Create a response with a 404 Not Found status code
+            notFoundResponse.statusCode = http:STATUS_NOT_FOUND;
+            notFoundResponse.setPayload({errmsg: "Programme not found"});
+            // Respond with the not found error
+            check caller->respond(notFoundResponse);
+        } else {
+            // Remove the programme from the table
+             Programme? removedProgramme = programme_table.remove(programmeCode);
+            // Create a response with a 204 No Content status code
+            http:Response noContentResponse = new();
+            noContentResponse.statusCode = http:STATUS_NO_CONTENT;
+            // Respond with the no content status
+            check caller->respond(noContentResponse);
         }
     }
 }
