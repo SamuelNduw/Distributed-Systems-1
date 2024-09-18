@@ -82,8 +82,7 @@ service /pdu on new http:Listener(9000) {
 
         return programmes;
     };
-    // An API to get programmes that are for review (registration_date greater than or equal to 5 years)
-    resource function get oldProgrammes() returns Programme[]|error {
+     resource function get oldProgrammes() returns Programme[]|error {
         Programme[] oldProgrammes = [];
         time:Utc currentDate = time:utcNow();
         
