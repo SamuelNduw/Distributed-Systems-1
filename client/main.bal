@@ -45,6 +45,53 @@ public function main() returns error? {
     } else {
         io:println("Failed to delete programme: ", deleteResponse.message());
     }
+    // Retrieve all programs
+    error? retrieveError = retrieveAllPrograms(clientEP);
+    if (retrieveError is error) {
+        io:println("Error retrieving programs: ", retrieveError.message());
+    }
+
+    // Retrieve programme title using programme_code
+    string programmeCodeToRetrieve = "07BCMS";
+    error? titleError = retrieveProgrammeTitle(clientEP, programmeCodeToRetrieve);
+    if (titleError is error) {
+        io:println("Error retrieving programme title: ", titleError.message());
+    }
+}
+// Function to retrieve all programs
+function retrieveAllPrograms(http:Client clientEP) returns error? {
+    // Send a GET request to retrieve all programs
+    http:Response response = check clientEP->get("/programs");
+
+    // Check the status code of the response
+    if (response.statusCode == 200) {
+        // Parse the JSON response to an array of Programmes
+        json jsonResponse = check response.getJsonPayload();
+        Programme[] programs = check jsonResponse.fromJsonWithType();
+
+        // Print the list of programs
+        io:println("List of Programs: ", programs.toString());
+    } else {
+        io:println("Failed to retrieve programs. Status code: ", response.statusCode);
+    }
+}
+
+// Function to retrieve programme title using programme_code
+function retrieveProgrammeTitle(http:Client clientEP, string programme_code) returns error? {
+    // Send a GET request to retrieve the programme title
+    http:Response response = check clientEP->get("/programme/" + programme_code);
+
+    // Check the status code of the response
+    if (response.statusCode == 200) {
+        // Parse the JSON response to an array of strings
+        json jsonResponse = check response.getJsonPayload();
+        string[] programmeTitles = check jsonResponse.fromJsonWithType();
+
+        // Print the programme title
+        io:println("Programme Title: ", programmeTitles.toString());
+    } else {
+        io:println("Failed to retrieve programme title. Status code: ", response.statusCode);
+    }
 }
 
 // Define the Programme record type
