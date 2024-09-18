@@ -3,7 +3,6 @@ import ballerina/http;
 // Define the service at the base path /pdu
 service /pdu on new http:Listener(9000) {
 
-
     // Resource to retrieve the list of all programs
     resource function get programs(http:Caller caller, http:Request req) returns error? {
         // Convert the table to an array to return as JSON
@@ -69,6 +68,19 @@ service /pdu on new http:Listener(9000) {
             check caller->respond(noContentResponse);
         }
     }
+
+    // Resource to Retrieve programme title using the programme_code as a parameter
+    resource function get programme/[string programme_code]() returns string[]|error {
+        string[] programmes = [];
+        
+        foreach var programme in programme_table {
+            if (programme.programme_code == programme_code) {
+                programmes.push(programme.programme_title);
+            }
+        }
+
+        return programmes;
+    };
 }
 
 // Define the Programme record type
