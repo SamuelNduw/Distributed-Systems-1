@@ -1,8 +1,8 @@
 import ballerina/http;
+import ballerina/time;
 
 // Define the service at the base path /pdu
 service /pdu on new http:Listener(9000) {
-
 
     // Resource to retrieve the list of all programs
     resource function get programs(http:Caller caller, http:Request req) returns error? {
@@ -48,12 +48,12 @@ service /pdu on new http:Listener(9000) {
 
     // Resource function to handle DELETE requests
     map<Programme> programme = {};
-    resource function delete programmeCode(string programmeCode, http:Caller caller) returns error?{
+    resource function delete programme/[string programme_code](http:Caller caller) returns error?{
         http:Response response = new();
         http:Response notFoundResponse = new();
         
  // Check if the programme code exists in the table
-        if !programme_table.hasKey(programmeCode) {
+        if !programme_table.hasKey(programme_code) {
             // Create a response with a 404 Not Found status code
             notFoundResponse.statusCode = http:STATUS_NOT_FOUND;
             notFoundResponse.setPayload({errmsg: "Programme not found"});
@@ -61,13 +61,45 @@ service /pdu on new http:Listener(9000) {
             check caller->respond(notFoundResponse);
         } else {
             // Remove the programme from the table
-             Programme? removedProgramme = programme_table.remove(programmeCode);
+             Programme? removedProgramme = programme_table.remove(programme_code);
             // Create a response with a 204 No Content status code
             http:Response noContentResponse = new();
             noContentResponse.statusCode = http:STATUS_NO_CONTENT;
             // Respond with the no content status
             check caller->respond(noContentResponse);
         }
+    }
+
+    // Resource to Retrieve programme title using the programme_code as a parameter
+    resource function get programme/[string programme_code]() returns string[]|error {
+        string[] programmes = [];
+        
+        foreach var programme in programme_table {
+            if (programme.programme_code == programme_code) {
+                programmes.push(programme.programme_title);
+            }
+        }
+
+        return programmes;
+    };
+    // An API to get programmes that are for review (registration_date greater than or equal to 5 years)
+    resource function get oldProgrammes() returns Programme[]|error {
+        Programme[] oldProgrammes = [];
+        time:Utc currentDate = time:utcNow();
+        
+        foreach Programme programme in programme_table {
+            do {
+                time:Utc registrationDate = check time:utcFromString(programme.registration_date);
+                decimal yearsDiff = <decimal>time:utcDiffSeconds(currentDate, registrationDate) / (365.25 * 24 * 60 * 60);
+                if yearsDiff >= 5d {
+                    oldProgrammes.push(programme);
+                }
+            } on fail error e {
+                return error("Error processing date for programme: " + programme.programme_code, e);
+            }
+        }
+        
+        return oldProgrammes;
     }
 }
 

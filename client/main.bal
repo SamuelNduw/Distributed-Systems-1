@@ -28,6 +28,23 @@ public function main() returns error? {
         // Print error message with the response message
         io:println("Failed to add programme: ", response.message());
     }
+
+    // Define the programme code to be deleted
+    string programme_code = "08BCMS";
+
+    // Send a DELETE request to delete the programme
+    http:Response|http:ClientError deleteResponse = clientEP->delete("/programme/" + programme_code);
+    if (deleteResponse is http:Response) {
+        if (deleteResponse.statusCode == http:STATUS_NO_CONTENT) {
+            io:println("Programme deleted successfully.");
+        } else if (deleteResponse.statusCode == http:STATUS_NOT_FOUND) {
+            io:println("Programme not found.");
+        } else {
+            io:println("Failed to delete the programme. Status code: ", deleteResponse.statusCode);
+        }
+    } else {
+        io:println("Failed to delete programme: ", deleteResponse.message());
+    }
 }
 
 // Define the Programme record type
