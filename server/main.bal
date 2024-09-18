@@ -1,7 +1,15 @@
 import ballerina/http;
 
 service /pdu on new http:Listener(9000) {
- 
+    // Resource to retrieve the list of all programs
+    resource function get programs(http:Caller caller, http:Request req) returns error? {
+        // Convert the table to an array to return as JSON
+        Programme[] programs = programme_table.toArray();
+
+        // Send the response with the list of programs
+        check caller->respond(programs);
+    }
+
 }
 
 public type Programme record {|
