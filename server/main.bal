@@ -1,7 +1,17 @@
 import ballerina/http;
 
 service /pdu on new http:Listener(9000) {
-    
+    resource function get programme/[string programme_code]() returns string[]|error {
+        string[] programmes = [];
+        
+        foreach var programme in programme_table {
+            if (programme.programme_code == programme_code) {
+                programmes.push(programme.programme_title);
+            }
+        }
+
+        return programmes;
+    };
 }
 
 public type Programme record {|
