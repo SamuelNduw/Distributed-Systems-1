@@ -48,7 +48,7 @@ service /pdu on new http:Listener(9000) {
 
     // Resource function to handle DELETE requests
     map<Programme> programme = {};
-    resource function delete programmeCode(string programmeCode, http:Caller caller) returns error?{
+    resource function delete programmeCode/[string programmeCode](http:Caller caller) returns error?{
         http:Response response = new();
         http:Response notFoundResponse = new();
         
