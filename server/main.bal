@@ -1,4 +1,5 @@
 import ballerina/http;
+import ballerina/time;
 
 // Define the service at the base path /pdu
 service /pdu on new http:Listener(9000) {
@@ -81,6 +82,25 @@ service /pdu on new http:Listener(9000) {
 
         return programmes;
     };
+    // An API to get programmes that are for review (registration_date greater than or equal to 5 years)
+    resource function get oldProgrammes() returns Programme[]|error {
+        Programme[] oldProgrammes = [];
+        time:Utc currentDate = time:utcNow();
+        
+        foreach Programme programme in programme_table {
+            do {
+                time:Utc registrationDate = check time:utcFromString(programme.registration_date);
+                decimal yearsDiff = <decimal>time:utcDiffSeconds(currentDate, registrationDate) / (365.25 * 24 * 60 * 60);
+                if yearsDiff >= 5d {
+                    oldProgrammes.push(programme);
+                }
+            } on fail error e {
+                return error("Error processing date for programme: " + programme.programme_code, e);
+            }
+        }
+        
+        return oldProgrammes;
+    }
 }
 
 // Define the Programme record type
