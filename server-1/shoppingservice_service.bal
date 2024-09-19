@@ -1,5 +1,10 @@
 import ballerina/grpc;
 
+// Table to store products
+table<Product> key(sku) productsTable = table [];
+// Table to store orders
+table<Order> key(user_id) ordersTable = table [];
+
 listener grpc:Listener ep = new (9090);
 
 @grpc:Descriptor {value: ONLINESHOPPING_DESC}
