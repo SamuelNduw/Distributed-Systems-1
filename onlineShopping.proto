@@ -17,6 +17,7 @@ service ShoppingService {
   rpc AddToCart(AddToCartRequest) returns (google.protobuf.Empty);
   rpc PlaceOrder(PlaceOrderRequest) returns (google.protobuf.Empty);
 }
+
 // Message to represent a product
 message Product {
   string name = 1;
