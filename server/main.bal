@@ -44,7 +44,36 @@ service /pdu on new http:Listener(9000) {
             check caller->respond(badRequestResponse);
         }
     }
+      resource function put programmes/[string programme_code](http:Caller caller, http:Request req) returns error? {
+        Programme updatedProgramme;
+        var result = req.getJsonPayload();
+        if (result is json) {
+            updatedProgramme = check result.cloneWithType(Programme);
 
+            if (updatedProgramme.programme_code != programme_code) {
+                http:Response badRequestResponse = new;
+                badRequestResponse.statusCode = http:STATUS_BAD_REQUEST;
+                badRequestResponse.setPayload({errmsg: "Programme code in URL and body do not match"});
+                check caller->respond(badRequestResponse);
+                return;
+            }
+
+            if programme_table.hasKey(programme_code) {
+                programme_table.put(updatedProgramme); //= updatedProgramme;
+                check caller->respond(updatedProgramme);
+            } else {
+                http:Response notFoundResponse = new;
+                notFoundResponse.statusCode = http:STATUS_NOT_FOUND;
+                notFoundResponse.setPayload({errmsg: "Programme not found"});
+                check caller->respond(notFoundResponse);
+            }
+        } else {
+            http:Response badRequestResponse = new;
+            badRequestResponse.statusCode = http:STATUS_BAD_REQUEST;
+            badRequestResponse.setPayload({errmsg: "Invalid request payload"});
+            check caller->respond(badRequestResponse);
+        }
+    }
 
     // Resource function to handle DELETE requests
     map<Programme> programme = {};
