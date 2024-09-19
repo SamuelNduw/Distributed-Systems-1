@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/io;
 
 // Table to store products
 table<Product> key(sku) productsTable = table [];
@@ -33,6 +34,16 @@ service "ShoppingService" on ep {
     }
 
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
+        User[] users = [];
+        error? e = clientStream.forEach(function(CreateUsersRequest userReq) {
+            users.push(userReq.user);
+            io:println("User created: ", userReq.user.user_id);
+        });
+
+        if e is error {
+            return e;
+        }
+        return {status: "Users created successfully"};
     }
 }
 
