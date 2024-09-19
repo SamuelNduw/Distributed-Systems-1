@@ -100,6 +100,20 @@ service /pdu on new http:Listener(9000) {
         
         return oldProgrammes;
     }
+    resource function get Faculty/[string faculty]() returns string[]|error {
+      
+        // Creating an array to store the programme titles
+        string[] programmes = []; 
+     
+        // Loop to go through the record and an if statement to compare
+        foreach var programme in programme_table {
+            if (programme.faculty == faculty) {
+                programmes.push(programme.programme_title); // Use programme.programme_title
+            }
+        }
+        
+        return programmes;
+    }
 }
 
 // Define the Programme record type
