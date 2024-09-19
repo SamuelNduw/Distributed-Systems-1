@@ -458,13 +458,13 @@ public type ContextCreateUsersRequest record {|
 
 @protobuf:Descriptor {value: ONLINESHOPPING_DESC}
 public type Order record {|
-    string user_id = "";
+    readonly string user_id = "";
     Product[] products = [];
 |};
 
 @protobuf:Descriptor {value: ONLINESHOPPING_DESC}
 public type User record {|
-    string user_id = "";
+    readonly string user_id = "";
     string role = "";
 |};
 
@@ -474,7 +474,7 @@ public type Product record {|
     string description = "";
     float price = 0.0;
     int stock_quantity = 0;
-    string sku = "";
+    readonly string sku = "";
     string status = "";
 |};
 
