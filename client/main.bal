@@ -12,10 +12,24 @@ public function main() returns error? {
         faculty: "Computing and Informatics",
         department_name: "Software Development",
         programme_title: "Bachelor of Computer Science",
-        registration_date: "01-09-2024",
+        registration_date: "2016-09-01T00:00:00Z",
         courses: [
             {course_code: "CS201", course_name: "Advanced Programming"},
             {course_code: "CS202", course_name: "Operating Systems"}
+        ]
+    };
+
+    // Defining a Programme to be updated
+    Programme updatedProgramme = {
+        programme_code: "07BCMS",
+        NqfLevel: LEVEL_8,
+        faculty: "Computing and Informatics",
+        department_name: "Software Development",
+        programme_title: "Bachelor of Computer Science Updated",
+        registration_date: "2021-09-01T00:00:00Z",
+        courses: [
+            { course_code: "CS101", course_name: "Introduction to Computer Science" },
+            { course_code: "CS104", course_name: "Advanced Data Structures" }
         ]
     };
 
@@ -63,6 +77,14 @@ public function main() returns error? {
     if (oldProgrammesError is error) {
         io:println("Error retrieving old programmes: ", oldProgrammesError.message());
     }
+
+    // Retrieve programme using faculty
+    string[] facultyProgrammes = check getProgrammesByFaculty(clientEP, "Engineering");
+    io:println("Programmes for Engineering faculty: " + facultyProgrammes.toString());
+
+    // Update Programme
+    Programme updatedResponse = check updateProgramme(clientEP, "07BCMS", updatedProgramme);
+    io:println("Updated Programme: " + updatedResponse.toString());
 }
 // Function to retrieve all programs
 function retrieveAllPrograms(http:Client clientEP) returns error? {
@@ -116,6 +138,44 @@ function retrieveOldProgrammes(http:Client clientEP) returns error? {
         io:println("Failed to retrieve old programmes. Status code: ", response.statusCode);
     }
 }  
+
+// Function to call the get Faculty/[string faculty] resource
+
+function getProgrammesByFaculty(http:Client clientEP, string faculty) returns string[]|error {
+    // Send a GET request with the faculty as a path parameter
+    string path = "/Faculty/" + faculty;
+    http:Response response = check clientEP->get(path);
+    
+    // Check for response status and retrieve the JSON payload
+    if response.statusCode == 200 {
+        json payload = check response.getJsonPayload();
+        string[] programmes = check payload.cloneWithType();
+        return programmes;
+    } else {
+        return error("Failed to retrieve programmes by faculty. Status code: " + response.statusCode.toString());
+    }
+}
+
+// Function to call the update (PUT) programmes/[string programme_code] resource
+function updateProgramme(http:Client clientEP, string programmeCode, Programme updatedProgramme) returns Programme|error {
+    // Send a PUT request with the updated programme in the body
+    string path = "/programmes/" + programmeCode;
+    json payload = check updatedProgramme.cloneWithType(json);
+
+    http:Response response = check clientEP->put(path, payload);
+
+    // Check for response status and retrieve the updated Programme from the response
+    if response.statusCode == 200 {
+        json responsePayload = check response.getJsonPayload();
+        return check responsePayload.cloneWithType(Programme);
+    } else if response.statusCode == 404 {
+        return error("Programme not found. Status code: 404");
+    } else if response.statusCode == 400 {
+        return error("Bad Request. Status code: 400");
+    } else {
+        return error("Failed to update programme. Status code: " + response.statusCode.toString());
+    }
+}
 
 // Define the Programme record type
 public type Programme record {|

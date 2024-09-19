@@ -44,6 +44,8 @@ service /pdu on new http:Listener(9000) {
             check caller->respond(badRequestResponse);
         }
     }
+
+    // Resource function to update programmes
       resource function put programmes/[string programme_code](http:Caller caller, http:Request req) returns error? {
         Programme updatedProgramme;
         var result = req.getJsonPayload();
@@ -81,7 +83,7 @@ service /pdu on new http:Listener(9000) {
         http:Response response = new();
         http:Response notFoundResponse = new();
         
- // Check if the programme code exists in the table
+        // Check if the programme code exists in the table
         if !programme_table.hasKey(programme_code) {
             // Create a response with a 404 Not Found status code
             notFoundResponse.statusCode = http:STATUS_NOT_FOUND;
@@ -111,7 +113,9 @@ service /pdu on new http:Listener(9000) {
 
         return programmes;
     };
-     resource function get oldProgrammes() returns Programme[]|error {
+
+    // Resource function to Retrieve programmes that are due for review
+    resource function get oldProgrammes() returns Programme[]|error {
         Programme[] oldProgrammes = [];
         time:Utc currentDate = time:utcNow();
         
@@ -129,6 +133,8 @@ service /pdu on new http:Listener(9000) {
         
         return oldProgrammes;
     }
+
+    // Resource to Retrieve programmes by using the faculty 
     resource function get Faculty/[string faculty]() returns string[]|error {
       
         // Creating an array to store the programme titles
