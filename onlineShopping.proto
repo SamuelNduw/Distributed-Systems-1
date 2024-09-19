@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+// Service definition for the shopping system
+service ShoppingService {
+  // Admin functions
+  rpc AddProduct(AddProductRequest) returns (ProductCodeResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (ProductCodeResponse);
+  rpc RemoveProduct(RemoveProductRequest) returns (ProductListResponse);
+  rpc CreateUsers(stream CreateUsersRequest) returns (CreateUsersResponse);
+
+  // Customer functions
+  rpc ListAvailableProducts(google.protobuf.Empty) returns (ProductListResponse);
+  rpc SearchProduct(SearchProductRequest) returns (SearchProductResponse);
+  rpc AddToCart(AddToCartRequest) returns (google.protobuf.Empty);
+  rpc PlaceOrder(PlaceOrderRequest) returns (google.protobuf.Empty);
+}
+// Message to represent a product
+message Product {
+  string name = 1;
+  string description = 2;
+  float price = 3;
+  int32 stock_quantity = 4;
+  string sku = 5;
+  string status = 6; // Available or Out of Stock
+}
+
+// Message to represent an order
+message Order {
+  string user_id = 1;
+  repeated Product products = 2;
+}
+
+// Message to represent a user
+message User {
+  string user_id = 1;
+  string role = 2; // Either "customer" or "admin"
+}
+
+// Request message to add a product
+message AddProductRequest {
+  Product product = 1;
+}
+
+// Response message to return a product code
+message ProductCodeResponse {
+  string product_code = 1;
+}
+
+// Request message to update a product
+message UpdateProductRequest {
+  string sku = 1;
+  Product product = 2;
+}
+
+// Request message to remove a product
+message RemoveProductRequest {
+  string sku = 1;
+}
+
+// Response message to return updated product list
+message ProductListResponse {
+  repeated Product products = 1;
+}
+
+// Request message to search for a product by SKU
+message SearchProductRequest {
+  string sku = 1;
+}
+
+// Response message for searching a product
+message SearchProductResponse {
+  Product product = 1;
+}
+
+// Request message to add a product to cart
+message AddToCartRequest {
+  string user_id = 1;
+  string sku = 2;
+}
+
+// Request message to place an order
+message PlaceOrderRequest {
+  string user_id = 1;
+}
+
+// Request message to create users (streaming)
+message CreateUsersRequest {
+  User user = 1;
+}
+
+// Response for creating users
+message CreateUsersResponse {
+  string status = 1;
+}
+
