@@ -18,6 +18,29 @@ service "ShoppingService" on ep {
     }
 
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
+        // Extract SKU from request
+    string skuToRemove = value.sku;
+
+    // Check if the product exists in the table
+    Product? productToRemove = productsTable[skuToRemove];
+    if (productToRemove is Product) {
+        // Remove the product from the table
+        delete productsTable[skuToRemove];
+        
+        // Fetch the updated list of products
+        Product[] updatedProducts = productsTable.toList();
+
+        // Create response with updated list of products
+        ProductListResponse response = {
+            products: updatedProducts
+        };
+        
+        return response;
+    } else {
+        // If product does not exist, return an error
+        return error("Product with SKU '" + skuToRemove + "' not found.");
+    }
+}
     }
 
     remote function ListAvailableProducts() returns ProductListResponse|error {
