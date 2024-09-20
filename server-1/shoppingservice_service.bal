@@ -24,6 +24,22 @@ service "ShoppingService" on ep {
     }
 
     remote function SearchProduct(SearchProductRequest value) returns SearchProductResponse|error {
+         // Extract the sku from the request
+    string sku = value.sku;
+    
+    // Check if the product exists in the productsTable
+    if productsTable.hasKey(sku) {
+        Product foundProduct = <Product>productsTable[sku];
+        // Return the product in the response
+        return {
+            products: [foundProduct]
+        };
+    } else {
+        // If no product is found, return an empty list
+        return {
+            products: []
+        };
+    }
     }
 
     remote function AddToCart(AddToCartRequest value) returns error? {
