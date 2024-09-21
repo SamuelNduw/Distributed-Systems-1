@@ -73,7 +73,7 @@ message SearchProductRequest {
 
 // Response message for searching a product
 message SearchProductResponse {
-  Product product = 1;
+  repeated Product product = 1;
 }
 
 // Request message to add a product to cart

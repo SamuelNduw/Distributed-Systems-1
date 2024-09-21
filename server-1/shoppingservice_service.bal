@@ -93,7 +93,18 @@ service "ShoppingService" on ep {
     }
 
     remote function SearchProduct(SearchProductRequest value) returns SearchProductResponse|error {
-        return error("Not implemented");
+         // Extract the sku from the request
+    string sku = value.sku;
+    
+    // Check if the product exists in the productsTable using the 'sku'
+        foreach var product in productsTable {
+            if product.sku == sku {
+                // Return the product 
+                return {product: product};
+            }
+        }
+        // Return an error if the product with that specific 'sku' does not exist
+        return error("Product not found with SKU: " + sku);
     }
 
     remote function AddToCart(AddToCartRequest value) returns error? {
