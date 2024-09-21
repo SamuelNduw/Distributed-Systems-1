@@ -35,9 +35,20 @@ service "ShoppingService" on ep {
     };
     return response;
     }
-
+    
     remote function UpdateProduct(UpdateProductRequest value) returns ProductCodeResponse|error {
-        return error("Not implemented");
+        string sku = value.sku;
+        Product updatedProduct = value.product;
+
+        foreach var product in productsTable {
+            if product.sku == sku {
+                Product temp = productsTable.remove(product.sku);
+                productsTable.add(updatedProduct);
+                io:println("Updated product: ", updatedProduct.name);
+                return {product_code: updatedProduct.sku};
+            }
+        }
+        return error("Product not found for SKU: " + sku);
     }
 
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
@@ -73,4 +84,3 @@ service "ShoppingService" on ep {
         return {status: "Users created successfully"};
     }
 }
-
