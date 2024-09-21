@@ -25,10 +25,10 @@ service "ShoppingService" on ep {
     Product? productToRemove = productsTable[skuToRemove];
     if (productToRemove is Product) {
         // Remove the product from the table
-        delete productsTable[skuToRemove];
+        Product delete = productsTable.remove(skuToRemove);
         
         // Fetch the updated list of products
-        Product[] updatedProducts = productsTable.toList();
+        Product[] updatedProducts = from Product product in productsTable select product;
 
         // Create response with updated list of products
         ProductListResponse response = {
