@@ -27,19 +27,15 @@ service "ShoppingService" on ep {
          // Extract the sku from the request
     string sku = value.sku;
     
-    // Check if the product exists in the productsTable
-    if productsTable.hasKey(sku) {
-        Product foundProduct = <Product>productsTable[sku];
-        // Return the product in the response
-        return {
-            products: [foundProduct]
-        };
-    } else {
-        // If no product is found, return an empty list
-        return {
-            products: []
-        };
-    }
+    // Check if the product exists in the productsTable using the 'sku'
+        foreach var product in productsTable {
+            if product.sku == sku {
+                // Return the product 
+                return {product: product};
+            }
+        }
+        // Return an error if the product with that specific 'sku' does not exist
+        return error("Product not found with SKU: " + sku);
     }
 
     remote function AddToCart(AddToCartRequest value) returns error? {
