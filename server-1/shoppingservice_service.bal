@@ -77,8 +77,19 @@ service "ShoppingService" on ep {
 
     }
 
-    remote function ListAvailableProducts() returns ProductListResponse|error {
-        return error("Not implemented");
+    remote function ListAvailableProducts() returns ProductListResponse|error { 
+    //Creating an Array
+    Product[] availableProducts = from Product product in productsTable
+                                  select product;
+
+    // Create response with available products list
+    ProductListResponse response = {
+        products: availableProducts
+    };
+
+    // Return the ProductList
+    return response;
+
     }
 
     remote function SearchProduct(SearchProductRequest value) returns SearchProductResponse|error {
