@@ -29,8 +29,25 @@ service "ShoppingService" on ep {
     remote function AddToCart(AddToCartRequest value) returns error? {
     }
 
-    remote function PlaceOrder(PlaceOrderRequest value) returns error? {
+    remote function PlaceOrder(PlaceOrderRequest value) returns error? 
+    // Place an order for the user (Customer operation)
+    Product[]? cart = userCarts.get(value.user_id);
+    if (cart is Product[] ){
+        Order newOrder = {user_id: value.user_id, items: cart};
+        // Placeholder for order ID generation
+        string order_id = generateOrderId(); 
+        ordersTable.put(newOrder);
+        _=userCarts.remove(value.user_id);
+        return {order_id: order_id, message: "Order placed successfully"};
     }
+    return error("Cart is empty");
+}
+
+function generateOrderId() returns string {
+     return "ORDER-";
+}
+
+    
 
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
     }
