@@ -1,4 +1,5 @@
 import ballerina/grpc;
+import ballerina/io;
 
 // Table to store products
 table<Product> key(sku) productsTable = table [];
@@ -15,40 +16,18 @@ service "ShoppingService" on ep {
     }
     remote function UpdateProduct(UpdateProductRequest value) returns ProductCodeResponse|error {
         string sku = value.sku;
+        Product updatedProduct = value.product;
 
-        if productsTable.hasKey(sku) {
-            Product existingProduct = productsTable[sku];
-            existingProduct.name = value.name;
-            existingProduct.description = value.description;
-            existingProduct.price = value.price;
-            productsTable[sku] = existingProduct;
-
-            io:println("Product updated: ", existingProduct.name);
-            return {productCode: sku};
-        } else {
-            return error("Product not found with SKU: " + sku);
+        foreach var product in productsTable {
+            if product.sku == sku {
+                Product temp = productsTable.remove(product.sku);
+                productsTable.add(updatedProduct);
+                io:println("Updated product: ", updatedProduct.name);
+                return {product_code: updatedProduct.sku};
+            }
         }
+        return error("Product not found for SKU: " + sku);
     }
-}
-
-type Product record {
-    string sku;
-    string name;
-    string description;
-    decimal price;
-};
-
-type UpdateProductRequest record {
-    string sku;
-    string name;
-    string description;
-    decimal price;
-};
-
-type ProductCodeResponse record {
-    string productCode;
-};
-
 
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
     }
@@ -67,3 +46,4 @@ type ProductCodeResponse record {
 
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
     }
+}
