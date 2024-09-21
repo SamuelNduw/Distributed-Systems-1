@@ -52,7 +52,29 @@ service "ShoppingService" on ep {
     }
 
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
-        return error("Not implemented");
+            // Extract SKU from request
+        string skuToRemove = value.sku;
+
+        // Check if the product exists in the table
+        Product? productToRemove = productsTable[skuToRemove];
+        if (productToRemove is Product) {
+            // Remove the product from the table
+            Product delete = productsTable.remove(skuToRemove);
+            
+            // Fetch the updated list of products
+            Product[] updatedProducts = from Product product in productsTable select product;
+
+            // Create response with updated list of products
+            ProductListResponse response = {
+                products: updatedProducts
+            };
+            
+            return response;
+        } else {
+            // If product does not exist, return an error
+            return error("Product with SKU '" + skuToRemove + "' not found.");
+        }
+
     }
 
     remote function ListAvailableProducts() returns ProductListResponse|error {
