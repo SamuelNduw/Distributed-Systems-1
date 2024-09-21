@@ -20,16 +20,19 @@ service "ShoppingService" on ep {
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
     }
 
-    remote function ListAvailableProducts() returns ProductListResponse|error { {
+    remote function ListAvailableProducts() returns ProductListResponse|error { 
     //Creating an Array
     Product[] availableProducts = from Product product in productsTable
-                                  where product.status == "available"
                                   select product;
 
+    // Create response with available products list
+    ProductListResponse response = {
+        products: availableProducts
+    };
+
     // Return the ProductList
-    return {products: availableProducts};
-}
-}
+    return response;
+
     }
 
     remote function SearchProduct(SearchProductRequest value) returns SearchProductResponse|error {
