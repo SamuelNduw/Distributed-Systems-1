@@ -61,7 +61,16 @@ service "ShoppingService" on ep {
     }
 
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
-        return error("Not implemented");
+        User[] users = [];
+        error? e = clientStream.forEach(function(CreateUsersRequest userReq) {
+            users.push(userReq.user);
+            io:println("User created: ", userReq.user.user_id);
+        });
+
+        if e is error {
+            return e;
+        }
+        return {status: "Users created successfully"};
     }
 }
 
