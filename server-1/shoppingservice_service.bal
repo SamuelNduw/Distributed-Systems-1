@@ -130,7 +130,15 @@ service "ShoppingService" on ep {
     }
 
     remote function PlaceOrder(PlaceOrderRequest value) returns error? {
-        return error("Not implemented");
+        string userId = value.user_id;
+        var cartEntry = ordersTable[userId];
+
+        if cartEntry is Order {
+            io:println("Order placed for user: ", userId, " with products: ", cartEntry.products);
+            Order od = ordersTable.remove(cartEntry.user_id);
+            return;
+        }
+        return error("No cart found for user: " + userId);
     }
 
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
