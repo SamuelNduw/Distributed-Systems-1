@@ -79,7 +79,8 @@ service "ShoppingService" on ep {
 
     remote function ListAvailableProducts() returns ProductListResponse|error { 
     //Creating an Array
-    Product[] availableProducts = from Product product in productsTable
+    Product[] availableProducts = from Product product in productsTable 
+                                  where product.status == "available"
                                   select product;
 
     // Create response with available products list

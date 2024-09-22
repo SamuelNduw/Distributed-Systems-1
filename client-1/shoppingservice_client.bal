@@ -3,7 +3,7 @@ import ballerina/io;
 ShoppingServiceClient ep = check new ("http://localhost:9090");
 
 public function main() returns error? {
-    AddProductRequest addProductRequest = {product: {name: "ballerina", description: "ballerina", price: 1, stock_quantity: 1, sku: "ballerina", status: "ballerina"}};
+    AddProductRequest addProductRequest = {product: {name: "ballerina", description: "ballerina", price: 1, stock_quantity: 1, sku: "ballerina", status: "available"}};
     ProductCodeResponse addProductResponse = check ep->AddProduct(addProductRequest);
     io:println(addProductResponse);
 
