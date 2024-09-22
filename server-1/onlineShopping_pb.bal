@@ -464,7 +464,7 @@ public type Order record {|
 
 @protobuf:Descriptor {value: ONLINESHOPPING_DESC}
 public type User record {|
-    string user_id = "";
+    readonly string user_id = "";
     string role = "";
 |};
 

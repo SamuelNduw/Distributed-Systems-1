@@ -109,7 +109,24 @@ service "ShoppingService" on ep {
     }
 
     remote function AddToCart(AddToCartRequest value) returns error? {
-        return error("Not implemented");
+        string userId = value.user_id;
+        string sku = value.sku;
+
+        foreach var product in productsTable {
+            if product.sku == sku && product.status == "available" {
+                Product cartProduct = product;
+                var cartEntry = ordersTable[userId];
+                if cartEntry is Order {
+                    cartEntry.products.push(cartProduct);
+                } else {
+                    Order newOrder = {user_id: userId, products: [cartProduct]};
+                    ordersTable.add(newOrder);
+                }
+                io:println("Added product to cart for user: ", userId);
+                return;
+            }
+        }
+        return error("Product not available or does not exist with SKU: " + sku);
     }
 
     remote function PlaceOrder(PlaceOrderRequest value) returns error? {
