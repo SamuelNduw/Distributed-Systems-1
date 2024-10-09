@@ -33,6 +33,8 @@ public function main() returns error? {
         ]
     };
 
+    // THEODORE
+
     // Send a POST request to add the new programme
     http:Response|http:ClientError response = clientEP->post("/programmes", newProgramme);
     if (response is http:Response) {
@@ -45,6 +47,8 @@ public function main() returns error? {
 
     // Define the programme code to be deleted
     string programme_code = "08BCMS";
+
+    // ANETTE
 
     // Send a DELETE request to delete the programme
     http:Response|http:ClientError deleteResponse = clientEP->delete("/programme/" + programme_code);
@@ -65,6 +69,8 @@ public function main() returns error? {
         io:println("Error retrieving programs: ", retrieveError.message());
     }
 
+    //    BEAVEN
+
     // Retrieve programme title using programme_code
     string programmeCodeToRetrieve = "07BCMS";
     error? titleError = retrieveProgrammeTitle(clientEP, programmeCodeToRetrieve);
@@ -72,15 +78,21 @@ public function main() returns error? {
         io:println("Error retrieving programme title: ", titleError.message());
     }
 
+    //   SAMUEL
+
     // Retrieve old programmes
     error? oldProgrammesError = retrieveOldProgrammes(clientEP);
     if (oldProgrammesError is error) {
         io:println("Error retrieving old programmes: ", oldProgrammesError.message());
     }
 
+    //   CAROLINE
+
     // Retrieve programme using faculty
     string[] facultyProgrammes = check getProgrammesByFaculty(clientEP, "Engineering");
     io:println("Programmes for Engineering faculty: " + facultyProgrammes.toString());
+
+    // NATANGWE
 
     // Update Programme
     Programme updatedResponse = check updateProgramme(clientEP, "07BCMS", updatedProgramme);

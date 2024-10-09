@@ -4,6 +4,8 @@ import ballerina/time;
 // Define the service at the base path /pdu
 service /pdu on new http:Listener(9000) {
 
+    //     MARTIN
+
     // Resource to retrieve the list of all programs
     resource function get programs(http:Caller caller, http:Request req) returns error? {
         // Convert the table to an array to return as JSON
@@ -13,6 +15,7 @@ service /pdu on new http:Listener(9000) {
         check caller->respond(programs);
     }
 
+    //     THEODORE
 
     // Resource function to handle POST requests to add new programmes
     resource function post programmes(http:Caller caller, http:Request req) returns error? {
@@ -44,6 +47,8 @@ service /pdu on new http:Listener(9000) {
             check caller->respond(badRequestResponse);
         }
     }
+
+    // NATANGWE
 
     // Resource function to update programmes
       resource function put programmes/[string programme_code](http:Caller caller, http:Request req) returns error? {
@@ -77,6 +82,8 @@ service /pdu on new http:Listener(9000) {
         }
     }
 
+    //     ANETTE
+
     // Resource function to handle DELETE requests
     map<Programme> programme = {};
     resource function delete programme/[string programme_code](http:Caller caller) returns error?{
@@ -101,6 +108,8 @@ service /pdu on new http:Listener(9000) {
         }
     }
 
+    //   BEAVEN
+
     // Resource to Retrieve programme title using the programme_code as a parameter
     resource function get programme/[string programme_code]() returns string[]|error {
         string[] programmes = [];
@@ -113,6 +122,8 @@ service /pdu on new http:Listener(9000) {
 
         return programmes;
     };
+
+    //   SAMUEL
 
     // Resource function to Retrieve programmes that are due for review
     resource function get oldProgrammes() returns Programme[]|error {
@@ -133,6 +144,8 @@ service /pdu on new http:Listener(9000) {
         
         return oldProgrammes;
     }
+
+    //    CAROLINE
 
     // Resource to Retrieve programmes by using the faculty 
     resource function get Faculty/[string faculty]() returns string[]|error {

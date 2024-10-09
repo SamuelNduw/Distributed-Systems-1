@@ -12,6 +12,7 @@ listener grpc:Listener ep = new (9090);
 service "ShoppingService" on ep {
 
         
+    // THEODORE
     remote function AddProduct(AddProductRequest value) returns ProductCodeResponse|error {
 
     Product newProduct = {
@@ -36,6 +37,7 @@ service "ShoppingService" on ep {
     return response;
     }
     
+    // NATANGWE
     remote function UpdateProduct(UpdateProductRequest value) returns ProductCodeResponse|error {
         string sku = value.sku;
         Product updatedProduct = value.product;
@@ -51,6 +53,7 @@ service "ShoppingService" on ep {
         return error("Product not found for SKU: " + sku);
     }
 
+    // MARTIN
     remote function RemoveProduct(RemoveProductRequest value) returns ProductListResponse|error {
             // Extract SKU from request
         string skuToRemove = value.sku;
@@ -77,6 +80,7 @@ service "ShoppingService" on ep {
 
     }
 
+    // CAROLINE
     remote function ListAvailableProducts() returns ProductListResponse|error { 
     //Creating an Array
     Product[] availableProducts = from Product product in productsTable 
@@ -93,6 +97,7 @@ service "ShoppingService" on ep {
 
     }
 
+    // BEAVEN
     remote function SearchProduct(SearchProductRequest value) returns SearchProductResponse|error {
          // Extract the sku from the request
     string sku = value.sku;
@@ -108,6 +113,7 @@ service "ShoppingService" on ep {
         return error("Product not found with SKU: " + sku);
     }
 
+    // SAMUEL
     remote function AddToCart(AddToCartRequest value) returns error? {
         string userId = value.user_id;
         string sku = value.sku;
@@ -129,6 +135,7 @@ service "ShoppingService" on ep {
         return error("Product not available or does not exist with SKU: " + sku);
     }
 
+    // ANETTE
     remote function PlaceOrder(PlaceOrderRequest value) returns error? {
         string userId = value.user_id;
         var cartEntry = ordersTable[userId];
@@ -141,6 +148,7 @@ service "ShoppingService" on ep {
         return error("No cart found for user: " + userId);
     }
 
+    // SAMUEL
     remote function CreateUsers(stream<CreateUsersRequest, grpc:Error?> clientStream) returns CreateUsersResponse|error {
         User[] users = [];
         error? e = clientStream.forEach(function(CreateUsersRequest userReq) {
